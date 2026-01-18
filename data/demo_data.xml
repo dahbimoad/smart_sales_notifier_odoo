@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Product Categories -->
+        <record id="product_category_electronics" model="product.category">
+            <field name="name">Electronics</field>
+        </record>
+        
+        <record id="product_category_software" model="product.category">
+            <field name="name">Software &amp; Services</field>
+        </record>
+        
+        <record id="product_category_accessories" model="product.category">
+            <field name="name">Accessories</field>
+        </record>
+
+        <!-- Demo Products -->
+        <record id="product_laptop_pro" model="product.product">
+            <field name="name">MacBook Pro 16" M3</field>
+            <field name="categ_id" ref="product_category_electronics"/>
+            <field name="list_price">2499.00</field>
+            <field name="standard_price">1800.00</field>
+            <field name="type">consu</field>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
+            <field name="description_sale">Latest MacBook Pro with M3 chip, 16GB RAM, 512GB SSD. Perfect for professionals.</field>
+        </record>
+
+        <record id="product_iphone" model="product.product">
+            <field name="name">iPhone 15 Pro Max</field>
+            <field name="categ_id" ref="product_category_electronics"/>
+            <field name="list_price">1199.00</field>
+            <field name="standard_price">900.00</field>
+            <field name="type">consu</field>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
+            <field name="description_sale">iPhone 15 Pro Max 256GB - Titanium Blue</field>
+        </record>
+
+        <record id="product_airpods" model="product.product">
+            <field name="name">AirPods Pro 2</field>
+            <field name="categ_id" ref="product_category_accessories"/>
+            <field name="list_price">249.00</field>
+            <field name="standard_price">180.00</field>
+            <field name="type">consu</field>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
+            <field name="description_sale">Active Noise Cancellation, Adaptive Transparency, Personalized Spatial Audio</field>
+        </record>
+
+        <record id="product_enterprise_license" model="product.product">
+            <field name="name">Odoo Enterprise License</field>
+            <field name="categ_id" ref="product_category_software"/>
+            <field name="list_price">1500.00</field>
+            <field name="standard_price">500.00</field>
+            <field name="type">service</field>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
+            <field name="description_sale">Annual Odoo Enterprise License - Full ERP Suite</field>
+        </record>
+
+        <record id="product_consulting" model="product.product">
+            <field name="name">AI Integration Consulting</field>
+            <field name="categ_id" ref="product_category_software"/>
+            <field name="list_price">150.00</field>
+            <field name="standard_price">50.00</field>
+            <field name="type">service</field>
+            <field name="uom_id" ref="uom.product_uom_hour"/>
+            <field name="uom_po_id" ref="uom.product_uom_hour"/>
+            <field name="description_sale">Expert consulting for AI/n8n integration with your business systems</field>
+        </record>
+
+        <record id="product_magic_keyboard" model="product.product">
+            <field name="name">Magic Keyboard with Touch ID</field>
+            <field name="categ_id" ref="product_category_accessories"/>
+            <field name="list_price">199.00</field>
+            <field name="standard_price">140.00</field>
+            <field name="type">consu</field>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
+            <field name="description_sale">Wireless keyboard with Touch ID for secure authentication</field>
+        </record>
+
+        <record id="product_monitor" model="product.product">
+            <field name="name">Studio Display 27"</field>
+            <field name="categ_id" ref="product_category_electronics"/>
+            <field name="list_price">1599.00</field>
+            <field name="standard_price">1200.00</field>
+            <field name="type">consu</field>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
+            <field name="description_sale">5K Retina display, 12MP Ultra Wide camera, studio-quality mics</field>
+        </record>
+
+        <record id="product_cloud_hosting" model="product.product">
+            <field name="name">Cloud Hosting Premium</field>
+            <field name="categ_id" ref="product_category_software"/>
+            <field name="list_price">99.00</field>
+            <field name="standard_price">30.00</field>
+            <field name="type">service</field>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
+            <field name="description_sale">Monthly premium cloud hosting with 99.9% uptime SLA</field>
+        </record>
+
+        <!-- Demo Customers -->
+        <record id="customer_tech_corp" model="res.partner">
+            <field name="name">TechCorp International</field>
+            <field name="email">contact@techcorp.com</field>
+            <field name="phone">+1 555-0123</field>
+            <field name="street">123 Innovation Boulevard</field>
+            <field name="city">San Francisco</field>
+            <field name="zip">94102</field>
+            <field name="country_id" ref="base.us"/>
+            <field name="company_type">company</field>
+        </record>
+
+        <record id="customer_startup_ai" model="res.partner">
+            <field name="name">AI Startup Labs</field>
+            <field name="email">orders@aistartup.io</field>
+            <field name="phone">+1 555-0456</field>
+            <field name="street">456 Machine Learning Way</field>
+            <field name="city">Palo Alto</field>
+            <field name="zip">94301</field>
+            <field name="country_id" ref="base.us"/>
+            <field name="company_type">company</field>
+        </record>
+
+        <record id="customer_enterprise_solutions" model="res.partner">
+            <field name="name">Enterprise Solutions SARL</field>
+            <field name="email">procurement@enterprise-solutions.ma</field>
+            <field name="phone">+212 522-123456</field>
+            <field name="street">Avenue Mohammed V</field>
+            <field name="city">Casablanca</field>
+            <field name="zip">20000</field>
+            <field name="country_id" ref="base.ma"/>
+            <field name="company_type">company</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="aiGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f093fb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f5576c;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="128" height="128" rx="20" fill="url(#bgGrad)"/>
+  
+  <!-- Shopping cart / Sales icon -->
+  <g fill="white" opacity="0.9">
+    <path d="M30 35h10l4 8h50l-8 25H48l-2 5h42v5H43l-5-15 6-20H30v-8z"/>
+    <circle cx="50" cy="83" r="5"/>
+    <circle cx="80" cy="83" r="5"/>
+  </g>
+  
+  <!-- AI Brain icon -->
+  <g transform="translate(70, 20)">
+    <circle cx="25" cy="25" r="22" fill="url(#aiGrad)" opacity="0.95"/>
+    <path d="M25 12 c-7 0-13 6-13 13s6 13 13 13 13-6 13-13-6-13-13-13z M20 20h3v3h-3z M27 20h3v3h-3z M18 28c2 3 5 4 7 4s5-1 7-4" 
+          stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- Neural connections -->
+    <circle cx="15" cy="15" r="2" fill="white"/>
+    <circle cx="35" cy="15" r="2" fill="white"/>
+    <circle cx="15" cy="35" r="2" fill="white"/>
+    <circle cx="35" cy="35" r="2" fill="white"/>
+    <line x1="17" y1="17" x2="23" y2="23" stroke="white" stroke-width="1" opacity="0.7"/>
+    <line x1="33" y1="17" x2="27" y2="23" stroke="white" stroke-width="1" opacity="0.7"/>
+    <line x1="17" y1="33" x2="23" y2="27" stroke="white" stroke-width="1" opacity="0.7"/>
+    <line x1="33" y1="33" x2="27" y2="27" stroke="white" stroke-width="1" opacity="0.7"/>
+  </g>
+  
+  <!-- Notification bell -->
+  <g transform="translate(85, 70)">
+    <circle cx="15" cy="15" r="15" fill="#ffd93d"/>
+    <path d="M15 6c-4 0-7 3-7 7v5l-2 2v1h18v-1l-2-2v-5c0-4-3-7-7-7z M12 22c0 2 1.5 3 3 3s3-1 3-3" 
+          fill="#333" stroke="#333" stroke-width="1"/>
+    <circle cx="22" cy="8" r="4" fill="#f5576c"/>
+  </g>
+  
+  <!-- "AI" text -->
+  <text x="20" y="115" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="white" opacity="0.9">AI Sales</text>
+</svg>

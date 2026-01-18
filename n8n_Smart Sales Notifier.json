@@ -1,0 +1,177 @@
+{
+  "name": "Smart Sales Notifier",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sales-notifier",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "76b22282-49e8-49fc-8c95-0852fda884f5",
+      "name": "Webhook - Receive Odoo Data",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -700,
+        64
+      ],
+      "webhookId": "sales-notifier"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract order data from webhook body\nconst webhookData = $input.first().json;\nconst order = webhookData.body;\n\n// Prepare the prompt for Groq\nconst productsText = order.products && order.products.length > 0 \n  ? order.products.map(p => `${p.product_name} (qty: ${p.quantity}, price: ${p.subtotal})`).join(', ')\n  : 'No products listed';\n\nconst prompt = `Analyze this sales order and provide: 1) A brief analysis (2-3 sentences), 2) Priority level (low, medium, high, urgent), 3) Suggested follow-up action.\n\nOrder Details:\n- Order: ${order.order_name}\n- Customer: ${order.customer_name}\n- Email: ${order.customer_email || 'N/A'}\n- Total: ${order.total_amount} ${order.currency}\n- Products: ${productsText}\n- Salesperson: ${order.salesperson || 'N/A'}\n\nRespond in this exact JSON format:\n{\"analysis\": \"your analysis here\", \"priority\": \"low or medium or high or urgent\", \"action\": \"suggested action\"}`;\n\nreturn {\n  order_data: order,\n  groq_request: {\n    model: \"llama-3.1-8b-instant\",\n    messages: [\n      {\n        role: \"system\",\n        content: \"You are a sales assistant AI. Respond ONLY with valid JSON, no other text.\"\n      },\n      {\n        role: \"user\",\n        content: prompt\n      }\n    ],\n    temperature: 0.7,\n    max_tokens: 500\n  }\n};"
+      },
+      "id": "prep-node-001",
+      "name": "Prepare Groq Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -480,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.groq_request) }}",
+        "options": {}
+      },
+      "id": "e7712fa2-5593-405c-809b-2f1058674cca",
+      "name": "Groq AI - Analyze Order",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -240,
+        64
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "kpK2zwDwUWAd4O2q",
+          "name": "Header Auth account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get order data from the prep node\nconst prepData = $('Prepare Groq Request').first().json;\nconst orderData = prepData.order_data;\nconst groqResponse = $input.first().json;\n\nlet aiAnalysis = {};\ntry {\n  // Extract content from Groq response\n  const content = groqResponse.choices[0].message.content;\n  // Parse JSON from response\n  const jsonMatch = content.match(/\\{[\\s\\S]*\\}/);\n  if (jsonMatch) {\n    aiAnalysis = JSON.parse(jsonMatch[0]);\n  }\n} catch (e) {\n  aiAnalysis = {\n    analysis: 'New order received - requires review',\n    priority: 'medium',\n    action: 'Review order details and contact customer'\n  };\n}\n\n// Determine emoji based on priority\nconst priorityEmoji = {\n  'low': '🟢',\n  'medium': '🟡',\n  'high': '🟠',\n  'urgent': '🔴'\n};\n\nconst emoji = priorityEmoji[aiAnalysis.priority] || '🟡';\n\n// Format products list\nlet productsList = '';\nif (orderData.products && orderData.products.length > 0) {\n  productsList = orderData.products.map(p => `  • ${p.product_name} (x${p.quantity}) - ${p.subtotal}`).join('\\n');\n}\n\n// Create Telegram message\nconst telegramMessage = `${emoji} *NEW ORDER ALERT*\\n\\n` +\n  `📋 *Order:* ${orderData.order_name}\\n` +\n  `👤 *Customer:* ${orderData.customer_name}\\n` +\n  `💰 *Total:* ${orderData.total_amount} ${orderData.currency}\\n` +\n  `👨‍💼 *Salesperson:* ${orderData.salesperson || 'N/A'}\\n\\n` +\n  `📦 *Products:*\\n${productsList}\\n\\n` +\n  `━━━━━━━━━━━━━━━━━━━━\\n` +\n  `🤖 *AI ANALYSIS*\\n\\n` +\n  `⚡ *Priority:* ${aiAnalysis.priority.toUpperCase()}\\n\\n` +\n  `📊 *Analysis:*\\n${aiAnalysis.analysis}\\n\\n` +\n  `✅ *Recommended Action:*\\n${aiAnalysis.action}\\n\\n` +\n  `━━━━━━━━━━━━━━━━━━━━\\n` +\n  `_Powered by Smart Sales Notifier_`;\n\nreturn {\n  order_name: orderData.order_name,\n  customer_name: orderData.customer_name,\n  total_amount: orderData.total_amount,\n  currency: orderData.currency,\n  ai_analysis: aiAnalysis.analysis,\n  priority: aiAnalysis.priority,\n  action: aiAnalysis.action,\n  priority_emoji: emoji,\n  telegram_message: telegramMessage,\n  webhook_response: {\n    ai_analysis: `${emoji} ${aiAnalysis.analysis}\\n\\n📋 Suggested Action: ${aiAnalysis.action}`,\n    priority: aiAnalysis.priority\n  }\n};"
+      },
+      "id": "42919f11-62c5-48cb-a7c6-d6b3d70339d5",
+      "name": "Process AI Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "6286504716",
+        "text": "={{ $json.telegram_message }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "4ca6e8fa-c4c9-4d27-8555-5173a08c5680",
+      "name": "Send Telegram Notification",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        260,
+        -48
+      ],
+      "webhookId": "77b47f37-932a-44a2-a9d6-093e03a5454f",
+      "credentials": {
+        "telegramApi": {
+          "id": "z1Uq7KFNTzKygvbh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.webhook_response }}",
+        "options": {}
+      },
+      "id": "61fe9e01-53de-4f67-8500-6b0dd56ee852",
+      "name": "Respond to Odoo",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        260,
+        160
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook - Receive Odoo Data": {
+      "main": [
+        [
+          {
+            "node": "Prepare Groq Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Groq Request": {
+      "main": [
+        [
+          {
+            "node": "Groq AI - Analyze Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq AI - Analyze Order": {
+      "main": [
+        [
+          {
+            "node": "Process AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process AI Response": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Notification",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Respond to Odoo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "v2-fixed",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "46358b612569ebdf501ef0b5083137dce6208194f7d394e3f11258b25dccd6e7"
+  },
+  "id": "4ce52XkCjh6VhauI",
+  "tags": []
+}
